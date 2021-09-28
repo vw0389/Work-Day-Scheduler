@@ -20,6 +20,9 @@ function todayFormatted() {
 //  add current date to id=currentDay
 $("#currentDay").text(todayFormatted());
 
+
+// TODO 
+// refactor this
 function renderSchedule() {
 
     for ( var i = 9; i < 13; i++) {
