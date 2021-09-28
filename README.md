@@ -2,6 +2,8 @@
 
 Simple work day scheduler applications to save events for each hour of the day, made using bootstrap & jQuery
 
+![image] (screenshot.png)
+
 ## User Story
 
 AS AN employee with a busy schedule

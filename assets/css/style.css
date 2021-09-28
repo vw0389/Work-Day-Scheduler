@@ -33,7 +33,7 @@ textarea{
 .row {
   white-space: pre-wrap;
   height: 80px;
-  border-top: 1px solid white;;
+  border-top: 1px solid white;
 }
 
 .hour {
@@ -66,6 +66,7 @@ textarea{
 }
 
 .saveBtn i:hover {
-  font-size: 20px;
+  font-size: 22px;
+  color:black;
   transition: all .3s ease-in-out;
 }
