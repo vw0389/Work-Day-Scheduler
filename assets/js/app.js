@@ -1,9 +1,9 @@
 var now = dayjs();
-var hours = [];
+var hours = {};
 
 function todayFormatted() {
     var returning = now.format('dddd, MMMM D');
-    
+
     var suffex = now.format('DD')
     if (suffex.charAt(1) === '1') {
         returning = returning + "st";
@@ -17,71 +17,80 @@ function todayFormatted() {
     return returning;
 }
 
-//  add current date to id=currentDay
-$("#currentDay").text(todayFormatted());
-
-
-// TODO 
-// refactor this
 function renderSchedule() {
-
-    for ( var i = 9; i < 13; i++) {
-        var timeFrame = ""
-        if ( i === 12){
-            var currentID = i + "pm";
+    for (var i = 9; i < 18; i++) {
+        var timeFrame = "";
+        // get the AM or PM correct, also 12 hour time instead of 24 hour time
+        var currentId = i
+        if ( i < 12) {
+            currentId = currentId + "am";
+        } else if (i === 12) {
+            currentId = currentId + "pm";
         } else {
-            var currentID = i + "am";
+            currentId = (currentId-12) + "pm";
         }
-        if (now.hour() > i){
+        if (now.hour() > i) {
             timeFrame = "past";
         } else if (now.hour() === i) {
             timeFrame = "present";
         } else {
             timeFrame = "future";
         }
+        // Create all elements
         $('<div/>', {
-            id: currentID,
+            id: currentId,
             class: "row"
         }).appendTo(".container");
-        $('<h3/>', {
+        $('<h4/>', {
             class: "hour col",
-            text: currentID
-        }).appendTo("#" + currentID);
+            text: currentId
+        }).appendTo("#" + currentId);
         $('<textarea/>', {
-            class: "col-10 " + timeFrame,
-        }).appendTo("#" + currentID);
+            class: "col-10 " + timeFrame + " textarea-" + i,
+        }).appendTo("#" + currentId);
         $('<button/>', {
-            class: "col saveBtn",
+            class: "col saveBtn click-" + i,
             text: ""
-        }).appendTo("#" + currentID);
-    }
-    for ( var i = 1; i < 6; i++) {
+        }).appendTo("#" + currentId);
+        // get tasks from dictionary
+
+        // save task on click
         
-        var currentID = i + "pm";
-        if (now.hour() > i+12){
-            timeFrame = "past";
-        } else if (now.hour() === i+12) {
-            timeFrame = "present";
-        } else {
-            timeFrame = "future";
-        }
-        $('<div/>', {
-            id: currentID,
-            class: "row"
-        }).appendTo(".container");
-        $('<h3/>', {
-            class: "hour col",
-            text: currentID
-        }).appendTo("#" + currentID);
-        $('<textarea/>', {
-            class: "col-10 " + timeFrame,
-        }).appendTo("#" + currentID);
-        $('<button/>', {
-            class: "col saveBtn",
+        $(".click-"+i).click(function () {
+            var classes = $(this).attr("class").split(" ");
+            var hour = classes[2].replace("click-","");
+            var text = $(".textarea-"+hour).val();
+            if (text === ""){
+                alert("Please enter a task");
+                return;
+            } else {
+                saveTask(hour,text);
+            }
             
-        }).appendTo("#" + currentID);
-        
+        });
+
+
     }
     $('.saveBtn').append("<i class=\"fas fa-save\"></i>");
 }
+
+function saveTask (hour,text) {
+    hours[hour] = text;
+    var jsonified = JSON.stringify(hours);
+    localStorage.setItem("dict",jsonified);
+    // Local storage stuff
+}
+function loadTasks () {
+    var dict = localStorage.getItem("dict");
+    if (!dict) {
+        return;
+    } else {
+        hours = JSON.parse(dict);
+        for ( var key in hours) {
+            $(".textarea-"+key).val(hours[key]);
+        }
+    }
+}
+$("#currentDay").text(todayFormatted());
 renderSchedule();
+loadTasks();
